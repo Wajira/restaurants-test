@@ -63,8 +63,6 @@ public class RestaurantServiceTest {
 
         List<String> suggestions = restaurantService.getRestaurantSuggestions("sessionId");
 
-        // Assuming the result should contain restaurant suggestions
-        // Add assertions accordingly
     }
 
     @Test
@@ -76,5 +74,4 @@ public class RestaurantServiceTest {
         assertEquals(null, suggestions);
     }
 
-    // Add similar tests for other scenarios as needed
 }

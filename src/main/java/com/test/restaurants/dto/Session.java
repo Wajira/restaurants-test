@@ -1,10 +1,11 @@
 package com.test.restaurants.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Session {
     private String sessionId;
-    private List<User> participants;
+    private List<User> participants = new ArrayList<>();
     private List<String> restaurantSuggestions;
     private boolean ended;
 

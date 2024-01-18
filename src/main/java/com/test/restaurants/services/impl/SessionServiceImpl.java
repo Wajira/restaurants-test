@@ -23,7 +23,7 @@ public class SessionServiceImpl implements SessionService {
         Session newSession = new Session();
         newSession.getParticipants().add(user);
         activeSessions.add(newSession);
-        return newSession.getSessionId();
+        return "Successfully Created Session..!";
     }
 
     @Override

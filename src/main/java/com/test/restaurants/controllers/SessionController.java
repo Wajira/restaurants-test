@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,12 +32,13 @@ public class SessionController {
             @ApiResponse(code = 500, message = "An unexpected error occurred")
     })
     @PostMapping("/create")
-    public String createSession(@RequestBody @Valid User user) {
+    public ResponseEntity<String> createSession(@RequestBody @Valid User user) {
         logger.info("Creating a Session");
         Session newSession = new Session();
+//        newSession.getParticipants() = new ArrayList<>();
         newSession.getParticipants().add(user);
         activeSessions.add(newSession);
-        return newSession.getSessionId();
+        return new ResponseEntity<>("Successfully added into session..!", HttpStatus.ACCEPTED);
     }
 
     @ApiOperation("Join an existing session")
@@ -45,14 +48,14 @@ public class SessionController {
             @ApiResponse(code = 500, message = "An unexpected error occurred")
     })
     @PostMapping("/{sessionId}/join")
-    public String joinSession(@PathVariable String sessionId, @RequestBody @Valid User user) {
+    public ResponseEntity<String> joinSession(@PathVariable String sessionId, @RequestBody @Valid User user) {
         logger.info("Joining to a Session");
         Session session = getSessionById(sessionId);
         if (session != null && !session.isEnded()) {
             session.getParticipants().add(user);
-            return "Joined session successfully!";
+            return new ResponseEntity<>("Joined session successfully!", HttpStatus.ACCEPTED);
         } else {
-            return "Session not found or has ended.";
+            return new ResponseEntity<>("Session not found or has ended.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -63,15 +66,15 @@ public class SessionController {
             @ApiResponse(code = 500, message = "An unexpected error occurred")
     })
     @PostMapping("/{sessionId}/end")
-    public String endSession(@PathVariable String sessionId) {
+    public ResponseEntity<String> endSession(@PathVariable String sessionId) {
         Session session = getSessionById(sessionId);
         if (session != null && !session.isEnded()) {
             session.setEnded(true);
             logger.info("Session ended successfully!");
-            return "Session ended successfully!";
+            return new ResponseEntity<>("Session ended successfully!", HttpStatus.ACCEPTED);
         } else {
             logger.info("Session ended failed");
-            return "Session not found or has already ended.";
+            return new ResponseEntity<>("Session not found or has ended.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -82,10 +85,10 @@ public class SessionController {
             @ApiResponse(code = 500, message = "An unexpected error occurred")
     })
     @GetMapping("/{sessionId}/participants")
-    public List<User> getSessionParticipants(@PathVariable String sessionId) {
+    public ResponseEntity<List<User>> getSessionParticipants(@PathVariable String sessionId) {
         logger.info("Getting participants for Session {}",sessionId);
         Session session = getSessionById(sessionId);
-        return (session != null) ? session.getParticipants() : null;
+        return (session != null) ? new ResponseEntity<>(session.getParticipants(), HttpStatus.ACCEPTED) : new ResponseEntity("No Session Found ", HttpStatus.NOT_FOUND);
     }
 
     private Session getSessionById(String sessionId) {
